@@ -1,0 +1,19 @@
+{
+  "name": "test-addon",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "dependencies": {
+    "node-addon-api": "^2.0.0"
+  },
+  "devDependencies": {
+    "node-gyp": "^6.1.0"
+  },
+  "scripts": {
+    "build": "node-gyp rebuild",
+    "clean": "node-gyp clean"
+  },
+  "author": "",
+  "license": "ISC",
+  "gypfile": true
+}
