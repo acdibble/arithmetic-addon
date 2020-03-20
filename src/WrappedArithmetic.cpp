@@ -1,4 +1,3 @@
-#include <iostream>
 #include "WrappedArithmetic.h"
 
 Napi::FunctionReference WrappedArithmetic::constructor;
@@ -33,7 +32,7 @@ WrappedArithmetic::WrappedArithmetic(const Napi::CallbackInfo &info) : Napi::Obj
     arithmeticInstance = std::make_unique<Arithmetic>();
 };
 
-Napi::Value WrappedArithmetic::performOp(const Napi::CallbackInfo &info, const char *method)
+Napi::Value WrappedArithmetic::performOp(const Napi::CallbackInfo &info, Op method)
 {
     Napi::Env env{info.Env()};
     Napi::HandleScope scope{env};
@@ -41,47 +40,54 @@ Napi::Value WrappedArithmetic::performOp(const Napi::CallbackInfo &info, const c
     if (info.Length() != 1 || !info[0].IsNumber())
     {
         Napi::TypeError::New(env, "Number expected").ThrowAsJavaScriptException();
+        return env.Undefined();
     }
 
     auto value = info[0].As<Napi::Number>().Int64Value();
 
-    if (strncmp(method, "add", 4) == 0)
+    if (method == Op::div && value == 0)
     {
+        Napi::RangeError::New(env, "Cannot divide by zero").ThrowAsJavaScriptException();
+        return env.Undefined();
+    }
+
+    switch (method)
+    {
+    case Op::add:
         arithmeticInstance->add(value);
-    }
-    if (strncmp(method, "sub", 4) == 0)
-    {
+        break;
+    case Op::sub:
         arithmeticInstance->sub(value);
-    }
-    if (strncmp(method, "mul", 4) == 0)
-    {
+        break;
+    case Op::mul:
         arithmeticInstance->mul(value);
-    }
-    if (strncmp(method, "div", 4) == 0)
-    {
+        break;
+    case Op::div:
         arithmeticInstance->div(value);
+        break;
     }
+
     return env.Undefined();
 };
 
 Napi::Value WrappedArithmetic::add(const Napi::CallbackInfo &info)
 {
-    return performOp(info, "add");
+    return performOp(info, Op::add);
 };
 
 Napi::Value WrappedArithmetic::sub(const Napi::CallbackInfo &info)
 {
-    return performOp(info, "sub");
+    return performOp(info, Op::sub);
 };
 
 Napi::Value WrappedArithmetic::mul(const Napi::CallbackInfo &info)
 {
-    return performOp(info, "mul");
+    return performOp(info, Op::mul);
 };
 
 Napi::Value WrappedArithmetic::div(const Napi::CallbackInfo &info)
 {
-    return performOp(info, "div");
+    return performOp(info, Op::div);
 };
 
 Napi::Value WrappedArithmetic::getTotal(const Napi::CallbackInfo &info)

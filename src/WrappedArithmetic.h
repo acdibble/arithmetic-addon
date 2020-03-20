@@ -2,6 +2,14 @@
 #include <napi.h>
 #include "Arithemtic.h"
 
+enum Op
+{
+    add,
+    sub,
+    mul,
+    div
+};
+
 class WrappedArithmetic : public Napi::ObjectWrap<WrappedArithmetic>
 {
 public:
@@ -15,7 +23,7 @@ private:
     Napi::Value sub(const Napi::CallbackInfo &info);
     Napi::Value mul(const Napi::CallbackInfo &info);
     Napi::Value div(const Napi::CallbackInfo &info);
-    Napi::Value performOp(const Napi::CallbackInfo &info, const char *method);
+    Napi::Value performOp(const Napi::CallbackInfo &info, Op method);
 
     std::unique_ptr<Arithmetic> arithmeticInstance;
 };

@@ -30,4 +30,4 @@ int32_t Arithmetic::getTotal()
     auto temp = total;
     total = 0;
     return temp;
-}
+};
